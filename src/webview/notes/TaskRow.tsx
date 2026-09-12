@@ -73,7 +73,14 @@ export function TaskRow({ task, depth, editor, hideCompleted, onOpenLink }: Task
       editor.focusNeighbour(task.id, event.key === 'ArrowUp' ? -1 : 1);
     } else if (event.key === 'Escape') {
       handled();
-      inputRef.current?.blur();
+      // Leaving a blank task behind is never useful, so Escape discards it —
+      // unless it still holds subtasks or notes worth keeping.
+      if (task.title.trim() === '' && !hasChildren && !task.body) {
+        editor.setFocusId(null);
+        void editor.remove(task.id);
+      } else {
+        inputRef.current?.blur();
+      }
     }
   };
 

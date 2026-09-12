@@ -14,7 +14,9 @@
   --pd-chevron-size: 16px;
   --pd-checkbox-size: 16px;
   --pd-row-gap: 4px;
-  --pd-title-gap: 8px;
+  --pd-title-gap: 12px;
+  /* Horizontal padding of the title input; pulled back so text doesn't shift on edit. */
+  --pd-title-inset: 6px;
   /* Where a task's title text starts, measured from the row's left edge. */
   --pd-title-offset: calc(
     var(--pd-grip-gutter) + var(--pd-chevron-size) + var(--pd-row-gap) + var(--pd-checkbox-size) +
@@ -594,6 +596,19 @@
   line-height: var(--pd-line-height);
   overflow-wrap: anywhere;
   cursor: text;
+}
+
+/*
+ * While editing, the title reads as a field that starts clear of the checkbox.
+ * Its padding is offset by an equal negative margin so the text stays put.
+ */
+.pd-task__input {
+  width: calc(100% + var(--pd-title-inset));
+  margin-left: calc(-1 * var(--pd-title-inset));
+  padding-inline: var(--pd-title-inset);
+  border-radius: var(--pd-radius-sm);
+  background: var(--pd-bg-input);
+  box-shadow: inset 0 0 0 1px var(--pd-focus);
 }
 
 .pd-task__text code {
