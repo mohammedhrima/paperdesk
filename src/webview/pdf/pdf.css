@@ -1,0 +1,533 @@
+/*
+ * PDF viewer styles. Colors come from tokens.css; stack geometry comes from
+ * variables the viewer sets from layout.ts, so CSS and scroll arithmetic agree.
+ */
+
+.pd-viewer {
+  /* The surface pages rest on. Each reading theme gets a desk that suits it. */
+  --pd-desk: color-mix(in srgb, var(--pd-bg) 92%, var(--pd-fg) 8%);
+  --pd-page-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 4px 18px rgba(0, 0, 0, 0.1);
+  /* What an unrendered page looks like — close to the finished page, so rendering is calm. */
+  --pd-paper: #ffffff;
+  --pd-hit-bg: rgba(255, 196, 0, 0.42);
+  --pd-hit-current-bg: rgba(255, 120, 0, 0.62);
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--pd-desk);
+}
+
+.pd-viewer--dark {
+  --pd-desk: color-mix(in srgb, #0b0c0f 70%, var(--pd-bg) 30%);
+  --pd-page-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05), 0 6px 24px rgba(0, 0, 0, 0.5);
+  --pd-paper: #1d1e22;
+  /* Hits sit above the filtered canvas, so they need to read on a dark page. */
+  --pd-hit-bg: rgba(255, 200, 60, 0.3);
+  --pd-hit-current-bg: rgba(255, 150, 40, 0.55);
+}
+
+.pd-viewer--sepia {
+  --pd-desk: color-mix(in srgb, #3a3024 18%, var(--pd-bg) 82%);
+  --pd-paper: #f4ecdc;
+}
+
+.pd-viewer__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.pd-viewer__scroll-area {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.pd-viewer__scroll {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  outline: none;
+  overscroll-behavior: contain;
+}
+
+/* --- Toolbar ------------------------------------------------------------ */
+
+.pd-toolbar {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--pd-space-2);
+  height: 40px;
+  padding: 0 var(--pd-space-2);
+  border-bottom: 1px solid var(--pd-border-soft);
+  background: color-mix(in srgb, var(--pd-bg) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(10px);
+}
+
+.pd-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pd-toolbar__group--center {
+  justify-content: center;
+}
+
+.pd-toolbar__group--end {
+  justify-content: flex-end;
+  gap: var(--pd-space-2);
+}
+
+.pd-toolbar__file {
+  margin-left: var(--pd-space-2);
+  overflow: hidden;
+  color: var(--pd-fg-soft);
+  font-size: var(--pd-text-sm);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pd-toolbar__divider {
+  width: 1px;
+  height: 16px;
+  margin: 0 var(--pd-space-2);
+  background: var(--pd-border-soft);
+}
+
+.pd-toolbar__zoom {
+  min-width: 54px;
+  height: 26px;
+  padding: 0 var(--pd-space-2);
+  border: 0;
+  border-radius: var(--pd-radius);
+  background: transparent;
+  font-size: var(--pd-text-sm);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.pd-toolbar__zoom:hover {
+  background: var(--pd-bg-hover);
+}
+
+.pd-toolbar__progress {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pd-toolbar__progress-fill {
+  height: 100%;
+  background: var(--pd-accent);
+  transform-origin: left;
+  transition: transform 80ms linear;
+}
+
+.pd-page-input {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pd-space-1);
+  font-size: var(--pd-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.pd-page-input input {
+  min-width: 3ch;
+  height: 24px;
+  padding: 0 4px;
+  border: 1px solid var(--vscode-input-border, var(--pd-border-soft));
+  border-radius: var(--pd-radius-sm);
+  background: var(--pd-bg-input);
+  color: var(--vscode-input-foreground);
+  text-align: center;
+  box-sizing: content-box;
+}
+
+.pd-page-input input:focus {
+  border-color: var(--pd-focus);
+  outline: none;
+}
+
+.pd-page-input__total {
+  color: var(--pd-fg-soft);
+}
+
+/* Theme switch */
+
+.pd-segmented {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: var(--pd-radius);
+  background: var(--pd-bg-sunken);
+  box-shadow: inset 0 0 0 1px var(--pd-border-soft);
+}
+
+.pd-segmented__option {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pd-radius-sm);
+  background: transparent;
+  color: var(--pd-fg-soft);
+  cursor: pointer;
+  transition:
+    background var(--pd-fast) var(--pd-ease),
+    color var(--pd-fast) var(--pd-ease);
+}
+
+.pd-segmented__option:hover {
+  color: var(--pd-fg);
+}
+
+.pd-segmented__option--active {
+  background: var(--pd-bg);
+  color: var(--pd-fg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+/* Narrow editors: keep the essentials, drop the file name. */
+@media (max-width: 560px) {
+  .pd-toolbar__file,
+  .pd-toolbar__divider {
+    display: none;
+  }
+}
+
+/* --- Search ------------------------------------------------------------- */
+
+.pd-search-bar {
+  position: absolute;
+  top: var(--pd-space-2);
+  right: calc(var(--pd-space-4) + 8px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 4px 3px var(--pd-space-2);
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius-lg);
+  background: var(--pd-bg-raised);
+  color: var(--pd-fg-soft);
+  box-shadow: var(--pd-shadow);
+  animation: pd-drop-in var(--pd-normal) var(--pd-ease);
+}
+
+.pd-search-bar input {
+  width: 200px;
+  height: 24px;
+  margin-left: var(--pd-space-1);
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--pd-fg);
+}
+
+.pd-search-bar__status {
+  min-width: 64px;
+  padding: 0 var(--pd-space-2);
+  font-size: var(--pd-text-xs);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.pd-search-bar__status--empty {
+  color: var(--pd-danger);
+}
+
+@keyframes pd-drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+/* --- Outline ------------------------------------------------------------ */
+
+.pd-outline {
+  flex: none;
+  width: 260px;
+  overflow-y: auto;
+  padding: var(--pd-space-3) var(--pd-space-2);
+  border-right: 1px solid var(--pd-border-soft);
+  background: var(--pd-bg-sidebar);
+  animation: pd-slide-in var(--pd-normal) var(--pd-ease);
+}
+
+.pd-outline__heading {
+  margin: 0 var(--pd-space-2) var(--pd-space-2);
+  color: var(--pd-fg-soft);
+  font-size: var(--pd-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pd-outline__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pd-outline__row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--pd-radius);
+}
+
+.pd-outline__row:hover {
+  background: var(--pd-bg-hover);
+}
+
+.pd-outline__toggle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--pd-fg-soft);
+  cursor: pointer;
+}
+
+.pd-outline__toggle--empty {
+  visibility: hidden;
+}
+
+.pd-outline__link {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px 4px 2px;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  font-size: var(--pd-text-md);
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+@keyframes pd-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+/* --- Page stack --------------------------------------------------------- */
+
+.pd-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: safe center;
+  gap: var(--pd-page-gap);
+  min-width: max-content;
+  padding: var(--pd-stack-padding);
+}
+
+/* Hidden, not unmounted, until the saved position is restored: no jump from page 1. */
+.pd-stack--hidden {
+  visibility: hidden;
+}
+
+.pd-page {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--pd-paper);
+  box-shadow: var(--pd-page-shadow);
+}
+
+/* A quiet shimmer while a page is waiting for its first render. */
+.pd-page:not(.pd-page--rendered)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    color-mix(in srgb, var(--pd-fg) 5%, transparent) 50%,
+    transparent 70%
+  );
+  background-size: 250% 100%;
+  animation: pd-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes pd-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+.pd-page__canvas,
+.pd-page__images {
+  position: absolute;
+  inset: 0;
+}
+
+/* The canvas keeps its true pixels; the reading theme is only a filter on top. */
+.pd-page__canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: var(--pd-page-filter);
+  transition: filter var(--pd-normal) var(--pd-ease);
+}
+
+/* Protected images: unfiltered copies laid over their filtered originals. */
+.pd-page__images canvas {
+  position: absolute;
+  display: block;
+}
+
+/* --- pdf.js text layer (rules pdf.js requires for alignment) ------------ */
+
+.textLayer {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  line-height: 1;
+  text-align: initial;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+  caret-color: CanvasText;
+  z-index: 0;
+}
+
+.textLayer :is(span, br) {
+  position: absolute;
+  color: transparent;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+.textLayer > :not(.markedContent),
+.textLayer .markedContent span:not(.markedContent) {
+  z-index: 1;
+}
+
+.textLayer span.markedContent {
+  top: 0;
+  height: 0;
+}
+
+.textLayer ::selection {
+  background: color-mix(in srgb, var(--pd-accent) 32%, transparent);
+}
+
+.textLayer br::selection {
+  background: transparent;
+}
+
+.textLayer .endOfContent {
+  position: absolute;
+  inset: 100% 0 0;
+  display: block;
+  z-index: 0;
+  cursor: default;
+  user-select: none;
+}
+
+.pd-hit {
+  margin: -1px;
+  padding: 1px;
+  border-radius: 3px;
+  background: var(--pd-hit-bg);
+  color: transparent;
+}
+
+.pd-hit--current {
+  background: var(--pd-hit-current-bg);
+  box-shadow: 0 0 0 1px var(--pd-hit-current-bg);
+}
+
+/* --- Page indicator ----------------------------------------------------- */
+
+.pd-page-indicator {
+  position: absolute;
+  bottom: var(--pd-space-5);
+  left: 50%;
+  z-index: 5;
+  padding: 4px 12px;
+  border-radius: var(--pd-radius-pill);
+  background: color-mix(in srgb, var(--pd-bg-raised) 92%, transparent);
+  box-shadow: var(--pd-shadow);
+  color: var(--pd-fg);
+  font-size: var(--pd-text-sm);
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  transform: translate(-50%, 6px);
+  transition:
+    opacity var(--pd-normal) var(--pd-ease),
+    transform var(--pd-normal) var(--pd-ease);
+  pointer-events: none;
+}
+
+.pd-page-indicator--visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* --- Loading and error -------------------------------------------------- */
+
+.pd-viewer-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pd-space-2);
+  height: 100%;
+  padding: var(--pd-space-6);
+  color: var(--pd-fg-soft);
+  text-align: center;
+}
+
+.pd-viewer-state h2 {
+  margin: var(--pd-space-2) 0 0;
+  color: var(--pd-fg);
+  font-size: var(--pd-text-lg);
+  font-weight: 600;
+}
+
+.pd-viewer-state p {
+  max-width: 420px;
+  margin: 0;
+}
+
+.pd-spinner {
+  width: 26px;
+  height: 26px;
+  border: 2.5px solid var(--pd-border-soft);
+  border-top-color: var(--pd-accent);
+  border-radius: 50%;
+  animation: pd-spin 0.8s linear infinite;
+}
+
+@keyframes pd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

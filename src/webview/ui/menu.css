@@ -1,0 +1,88 @@
+.pd-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.pd-menu__list {
+  position: absolute;
+  top: calc(100% + var(--pd-space-1));
+  z-index: 50;
+  min-width: 196px;
+  padding: var(--pd-space-1);
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius-lg);
+  background: var(--vscode-menu-background, var(--pd-bg-raised));
+  color: var(--vscode-menu-foreground, var(--pd-fg));
+  box-shadow: var(--pd-shadow);
+  animation: pd-menu-in var(--pd-normal) var(--pd-ease);
+  transform-origin: top right;
+}
+
+.pd-menu__list--end {
+  right: 0;
+}
+
+.pd-menu__list--start {
+  left: 0;
+  transform-origin: top left;
+}
+
+@keyframes pd-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-2px);
+  }
+}
+
+.pd-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--pd-space-2);
+  width: 100%;
+  height: 28px;
+  padding: 0 var(--pd-space-2);
+  border: 0;
+  border-radius: var(--pd-radius);
+  background: transparent;
+  font-size: var(--pd-text-md);
+  text-align: left;
+  cursor: pointer;
+}
+
+.pd-menu__item:hover,
+.pd-menu__item:focus-visible {
+  outline: none;
+  background: var(--vscode-menu-selectionBackground, var(--pd-bg-hover));
+  color: var(--vscode-menu-selectionForeground, var(--pd-fg));
+}
+
+.pd-menu__item svg {
+  flex: none;
+  color: var(--pd-fg-soft);
+}
+
+.pd-menu__item--danger,
+.pd-menu__item--danger svg {
+  color: var(--pd-danger);
+}
+
+.pd-menu__spacer {
+  width: 14px;
+  flex: none;
+}
+
+.pd-menu__label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.pd-menu__hint {
+  color: var(--pd-fg-faint);
+  font-size: var(--pd-text-xs);
+}
+
+.pd-menu__separator {
+  height: 1px;
+  margin: var(--pd-space-1) var(--pd-space-1);
+  background: var(--pd-border-soft);
+}

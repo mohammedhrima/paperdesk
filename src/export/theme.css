@@ -1,0 +1,378 @@
+/*
+ * The document stylesheet for exported and previewed notes.
+ *
+ * This one file styles all three outputs: the in-editor preview, the exported
+ * HTML, and the PDF printed from it. Keeping it single-source is what stops the
+ * preview and the PDF from drifting apart.
+ *
+ * The renderer injects `--pd-accent` and the `@page` rule from settings; every
+ * other value is derived from those or defined here.
+ */
+
+:root {
+  --pd-font-sans: ui-sans-serif, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue",
+    sans-serif;
+  --pd-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+
+  --pd-text: #1c1d22;
+  --pd-text-soft: #5c6070;
+  --pd-text-faint: #8b8fa0;
+  --pd-surface: #ffffff;
+  --pd-surface-sunken: #f7f7f9;
+  --pd-border: #e4e5ea;
+  --pd-border-soft: #eeeef2;
+  --pd-done: #9aa0ae;
+
+  --pd-radius: 8px;
+  --pd-indent: 26px;
+  --pd-measure: 74ch;
+}
+
+:root[data-theme="dark"] {
+  --pd-text: #e6e7ec;
+  --pd-text-soft: #a2a6b6;
+  --pd-text-faint: #6f7484;
+  --pd-surface: #16171b;
+  --pd-surface-sunken: #1e1f25;
+  --pd-border: #2c2e36;
+  --pd-border-soft: #24262d;
+  --pd-done: #6b7080;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 48px 40px 72px;
+  background: var(--pd-surface);
+  color: var(--pd-text);
+  font-family: var(--pd-font-sans);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.pd-document {
+  max-width: var(--pd-measure);
+  margin: 0 auto;
+}
+
+/* --- Document header ---------------------------------------------------- */
+
+.pd-header {
+  margin-bottom: 40px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--pd-border);
+}
+
+.pd-title {
+  margin: 0 0 10px;
+  font-size: 30px;
+  font-weight: 660;
+  letter-spacing: -0.022em;
+  line-height: 1.2;
+}
+
+.pd-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  color: var(--pd-text-faint);
+  font-size: 12.5px;
+}
+
+.pd-meta__dot::before {
+  content: "·";
+  margin-right: 14px;
+}
+
+/* --- Progress ----------------------------------------------------------- */
+
+.pd-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.pd-progress__track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--pd-border-soft);
+  overflow: hidden;
+}
+
+.pd-progress__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--pd-accent);
+  /* Width is set inline from the note's real completion. */
+}
+
+.pd-progress__label {
+  flex: none;
+  color: var(--pd-text-soft);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Prose -------------------------------------------------------------- */
+
+.pd-prose > :first-child {
+  margin-top: 0;
+}
+
+.pd-prose > :last-child {
+  margin-bottom: 0;
+}
+
+.pd-prose h1,
+.pd-prose h2,
+.pd-prose h3,
+.pd-prose h4 {
+  margin: 1.9em 0 0.55em;
+  font-weight: 620;
+  letter-spacing: -0.014em;
+  line-height: 1.3;
+}
+
+.pd-prose h1 {
+  font-size: 23px;
+}
+.pd-prose h2 {
+  font-size: 19px;
+}
+.pd-prose h3 {
+  font-size: 16.5px;
+}
+.pd-prose h4 {
+  font-size: 15px;
+  color: var(--pd-text-soft);
+}
+
+.pd-prose p {
+  margin: 0 0 0.95em;
+}
+
+.pd-prose a {
+  color: var(--pd-accent);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--pd-accent) 35%, transparent);
+}
+
+.pd-prose strong {
+  font-weight: 640;
+}
+
+.pd-prose code {
+  padding: 0.15em 0.4em;
+  border-radius: 5px;
+  background: var(--pd-surface-sunken);
+  border: 1px solid var(--pd-border-soft);
+  font-family: var(--pd-font-mono);
+  font-size: 0.87em;
+}
+
+.pd-prose pre {
+  margin: 0 0 1em;
+  padding: 14px 16px;
+  border-radius: var(--pd-radius);
+  background: var(--pd-surface-sunken);
+  border: 1px solid var(--pd-border-soft);
+  overflow-x: auto;
+  line-height: 1.55;
+}
+
+.pd-prose pre code {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12.8px;
+}
+
+.pd-prose blockquote {
+  margin: 0 0 1em;
+  padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--pd-border);
+  color: var(--pd-text-soft);
+}
+
+.pd-prose ul,
+.pd-prose ol {
+  margin: 0 0 1em;
+  padding-left: 1.35em;
+}
+
+.pd-prose li {
+  margin: 0.2em 0;
+}
+
+.pd-prose hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px solid var(--pd-border);
+}
+
+.pd-prose table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.pd-prose th,
+.pd-prose td {
+  padding: 8px 12px;
+  border: 1px solid var(--pd-border);
+  text-align: left;
+}
+
+.pd-prose th {
+  background: var(--pd-surface-sunken);
+  font-weight: 620;
+}
+
+.pd-prose img {
+  max-width: 100%;
+  border-radius: var(--pd-radius);
+}
+
+/* --- Tasks -------------------------------------------------------------- */
+
+.pd-tasks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pd-prose + .pd-tasks,
+.pd-tasks + .pd-prose {
+  margin-top: 20px;
+}
+
+.pd-task {
+  position: relative;
+  padding: 3px 0;
+  break-inside: avoid;
+}
+
+.pd-task__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* A drawn checkbox rather than an input: it prints reliably and can be styled. */
+.pd-check {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  border: 1.5px solid var(--pd-border);
+  border-radius: 5px;
+  background: var(--pd-surface);
+}
+
+.pd-check--done {
+  border-color: var(--pd-accent);
+  background: var(--pd-accent);
+  /* The tick is a background image so it survives printing without a font. */
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.4l3 3 6-6.4'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pd-task__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.pd-task--done > .pd-task__row > .pd-task__title {
+  color: var(--pd-done);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--pd-done) 55%, transparent);
+}
+
+.pd-task__count {
+  flex: none;
+  margin-top: 1px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--pd-surface-sunken);
+  color: var(--pd-text-faint);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pd-task__body {
+  margin: 6px 0 10px;
+  padding: 10px 14px;
+  border-left: 2px solid var(--pd-border);
+  border-radius: 0 var(--pd-radius) var(--pd-radius) 0;
+  background: var(--pd-surface-sunken);
+  color: var(--pd-text-soft);
+  font-size: 14px;
+}
+
+/* Children sit under the checkbox, with a guide line tying them to the parent. */
+.pd-task__children {
+  margin: 2px 0 2px 7px;
+  padding: 0 0 0 var(--pd-indent);
+  border-left: 1px solid var(--pd-border-soft);
+  list-style: none;
+}
+
+/* --- Multi-note exports ------------------------------------------------- */
+
+.pd-note + .pd-note {
+  margin-top: 56px;
+  padding-top: 44px;
+  border-top: 1px solid var(--pd-border);
+  break-before: page;
+}
+
+.pd-empty {
+  padding: 28px 0;
+  color: var(--pd-text-faint);
+  font-style: italic;
+}
+
+/* --- Print -------------------------------------------------------------- */
+
+@media print {
+  body {
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .pd-document {
+    max-width: none;
+  }
+
+  .pd-task__body,
+  .pd-prose pre,
+  .pd-prose code,
+  .pd-check--done,
+  .pd-progress__fill,
+  .pd-task__count {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .pd-header {
+    break-after: avoid;
+  }
+
+  .pd-prose h1,
+  .pd-prose h2,
+  .pd-prose h3 {
+    break-after: avoid;
+  }
+}

@@ -1,0 +1,9 @@
+# Only the built extension ships. Everything is bundled, so no node_modules.
+**
+!dist/**
+!media/**
+!package.json
+!package.nls.json
+!README.md
+!LICENSE
+dist/**/*.map

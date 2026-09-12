@@ -1,0 +1,371 @@
+{
+  "name": "paperdesk",
+  "displayName": "PaperDesk",
+  "description": "%extension.description%",
+  "version": "0.1.0",
+  "publisher": "mohammedhrima",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohammedhrima/notes-vscode-extension.git"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Notebooks",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "pdf",
+    "pdf viewer",
+    "notes",
+    "todo",
+    "tasks",
+    "outliner",
+    "markdown"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "paperdesk.pdfViewer",
+        "displayName": "%editor.pdfViewer.title%",
+        "selector": [
+          {
+            "filenamePattern": "*.pdf"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "paperdesk",
+          "title": "%view.container.title%",
+          "icon": "media/activity-bar.svg"
+        }
+      ]
+    },
+    "views": {
+      "paperdesk": [
+        {
+          "type": "webview",
+          "id": "paperdesk.notesView",
+          "name": "%view.notes.title%",
+          "contextualTitle": "%view.container.title%"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "paperdesk.openNotes",
+        "title": "%command.openNotes%",
+        "category": "PaperDesk",
+        "icon": "$(window)"
+      },
+      {
+        "command": "paperdesk.newNote",
+        "title": "%command.newNote%",
+        "category": "PaperDesk",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "paperdesk.quickAddTask",
+        "title": "%command.quickAddTask%",
+        "category": "PaperDesk",
+        "icon": "$(add)"
+      },
+      {
+        "command": "paperdesk.revealNotesFolder",
+        "title": "%command.revealNotesFolder%",
+        "category": "PaperDesk",
+        "icon": "$(folder-opened)"
+      },
+      {
+        "command": "paperdesk.exportMarkdown",
+        "title": "%command.exportMarkdown%",
+        "category": "PaperDesk"
+      },
+      {
+        "command": "paperdesk.exportPdf",
+        "title": "%command.exportPdf%",
+        "category": "PaperDesk"
+      },
+      {
+        "command": "paperdesk.previewExport",
+        "title": "%command.previewExport%",
+        "category": "PaperDesk",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "paperdesk.newNote",
+          "when": "view == paperdesk.notesView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "paperdesk.openNotes",
+          "when": "view == paperdesk.notesView",
+          "group": "navigation@2"
+        },
+        {
+          "command": "paperdesk.revealNotesFolder",
+          "when": "view == paperdesk.notesView",
+          "group": "overflow@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "paperdesk.exportMarkdown",
+          "when": "workspaceFolderCount != 0"
+        },
+        {
+          "command": "paperdesk.exportPdf",
+          "when": "workspaceFolderCount != 0"
+        },
+        {
+          "command": "paperdesk.previewExport",
+          "when": "workspaceFolderCount != 0"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "paperdesk.quickAddTask",
+        "key": "ctrl+alt+t",
+        "mac": "cmd+alt+t"
+      },
+      {
+        "command": "paperdesk.openNotes",
+        "key": "ctrl+alt+n",
+        "mac": "cmd+alt+n"
+      }
+    ],
+    "configuration": {
+      "title": "PaperDesk",
+      "properties": {
+        "paperdesk.notes.folderName": {
+          "type": "string",
+          "default": ".notes",
+          "markdownDescription": "%config.notes.folderName%",
+          "scope": "resource"
+        },
+        "paperdesk.notes.saveDebounceMs": {
+          "type": "number",
+          "default": 400,
+          "minimum": 0,
+          "maximum": 5000,
+          "markdownDescription": "%config.notes.saveDebounceMs%"
+        },
+        "paperdesk.notes.confirmBeforeDelete": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.notes.confirmBeforeDelete%"
+        },
+        "paperdesk.notes.cascadeCompletion": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "always",
+            "never"
+          ],
+          "enumDescriptions": [
+            "%config.notes.cascadeCompletion.ask%",
+            "%config.notes.cascadeCompletion.always%",
+            "%config.notes.cascadeCompletion.never%"
+          ],
+          "default": "always",
+          "markdownDescription": "%config.notes.cascadeCompletion%"
+        },
+        "paperdesk.pdf.defaultTheme": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "light",
+            "dark",
+            "sepia"
+          ],
+          "enumDescriptions": [
+            "%config.pdf.defaultTheme.auto%",
+            "%config.pdf.defaultTheme.light%",
+            "%config.pdf.defaultTheme.dark%",
+            "%config.pdf.defaultTheme.sepia%"
+          ],
+          "default": "auto",
+          "markdownDescription": "%config.pdf.defaultTheme%"
+        },
+        "paperdesk.pdf.zoomStep": {
+          "type": "number",
+          "default": 0.15,
+          "minimum": 0.01,
+          "maximum": 1,
+          "markdownDescription": "%config.pdf.zoomStep%"
+        },
+        "paperdesk.pdf.minZoom": {
+          "type": "number",
+          "default": 0.25,
+          "markdownDescription": "%config.pdf.minZoom%"
+        },
+        "paperdesk.pdf.maxZoom": {
+          "type": "number",
+          "default": 6,
+          "markdownDescription": "%config.pdf.maxZoom%"
+        },
+        "paperdesk.pdf.renderWindow": {
+          "type": "number",
+          "default": 2,
+          "minimum": 0,
+          "maximum": 10,
+          "markdownDescription": "%config.pdf.renderWindow%"
+        },
+        "paperdesk.pdf.maxCanvasPixels": {
+          "type": "number",
+          "default": 16777216,
+          "markdownDescription": "%config.pdf.maxCanvasPixels%"
+        },
+        "paperdesk.pdf.restoreLastPage": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.pdf.restoreLastPage%"
+        },
+        "paperdesk.pdf.textLayer": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.pdf.textLayer%"
+        },
+        "paperdesk.pdf.dark.filter": {
+          "type": "string",
+          "default": "invert(0.88) hue-rotate(180deg)",
+          "markdownDescription": "%config.pdf.dark.filter%"
+        },
+        "paperdesk.pdf.dark.pageBackground": {
+          "type": "string",
+          "default": "#ffffff",
+          "markdownDescription": "%config.pdf.dark.pageBackground%"
+        },
+        "paperdesk.pdf.dark.protectImages": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.pdf.dark.protectImages%"
+        },
+        "paperdesk.pdf.dark.minProtectedImageArea": {
+          "type": "number",
+          "default": 2500,
+          "minimum": 0,
+          "markdownDescription": "%config.pdf.dark.minProtectedImageArea%"
+        },
+        "paperdesk.pdf.dark.maxProtectedImageCoverage": {
+          "type": "number",
+          "default": 0.85,
+          "minimum": 0,
+          "maximum": 1,
+          "markdownDescription": "%config.pdf.dark.maxProtectedImageCoverage%"
+        },
+        "paperdesk.pdf.sepia.filter": {
+          "type": "string",
+          "default": "sepia(0.35) brightness(0.96) contrast(0.95)",
+          "markdownDescription": "%config.pdf.sepia.filter%"
+        },
+        "paperdesk.pdf.sepia.pageBackground": {
+          "type": "string",
+          "default": "#ffffff",
+          "markdownDescription": "%config.pdf.sepia.pageBackground%"
+        },
+        "paperdesk.export.browserPath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "%config.export.browserPath%",
+          "scope": "machine"
+        },
+        "paperdesk.export.pageFormat": {
+          "type": "string",
+          "enum": [
+            "A4",
+            "Letter",
+            "Legal",
+            "A3",
+            "A5"
+          ],
+          "default": "A4",
+          "markdownDescription": "%config.export.pageFormat%"
+        },
+        "paperdesk.export.margin": {
+          "type": "string",
+          "default": "18mm 16mm",
+          "markdownDescription": "%config.export.margin%"
+        },
+        "paperdesk.export.includeCompleted": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.export.includeCompleted%"
+        },
+        "paperdesk.export.includeFrontmatter": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "%config.export.includeFrontmatter%"
+        },
+        "paperdesk.export.theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark"
+          ],
+          "default": "light",
+          "markdownDescription": "%config.export.theme%"
+        },
+        "paperdesk.export.accentColor": {
+          "type": "string",
+          "default": "#4f46e5",
+          "markdownDescription": "%config.export.accentColor%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "dev": "concurrently -n vite,host -c magenta,cyan \"vite\" \"node scripts/build-host.mjs --watch\"",
+    "build": "npm run build:webview && npm run build:host",
+    "build:webview": "vite build",
+    "build:host": "node scripts/build-host.mjs",
+    "package": "npm run build:webview -- --mode production && node scripts/build-host.mjs --production",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,css,json,md}\"",
+    "vsix": "npm run package && vsce package --no-dependencies",
+    "vscode:prepublish": "npm run package"
+  },
+  "dependencies": {
+    "mdast-util-from-markdown": "^2.0.2",
+    "mdast-util-gfm": "^3.1.0",
+    "micromark": "^4.0.2",
+    "micromark-extension-gfm": "^3.0.0",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "yaml": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^20.17.10",
+    "@types/react": "^18.3.17",
+    "@types/react-dom": "^18.3.5",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.18.0",
+    "@typescript-eslint/parser": "^8.18.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vscode/vsce": "^3.2.1",
+    "concurrently": "^9.1.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
+  }
+}

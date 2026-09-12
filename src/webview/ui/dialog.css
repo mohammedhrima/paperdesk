@@ -1,0 +1,52 @@
+.pd-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: var(--pd-space-4);
+  background: color-mix(in srgb, var(--vscode-editor-background) 55%, transparent);
+  backdrop-filter: blur(2px);
+  animation: pd-fade-in var(--pd-normal) var(--pd-ease);
+}
+
+.pd-dialog {
+  width: min(360px, 100%);
+  padding: var(--pd-space-5);
+  border: 1px solid var(--pd-border);
+  border-radius: var(--pd-radius-lg);
+  background: var(--pd-bg-raised);
+  box-shadow: var(--pd-shadow);
+  animation: pd-dialog-in var(--pd-normal) var(--pd-ease);
+}
+
+.pd-dialog__title {
+  margin: 0 0 var(--pd-space-2);
+  font-size: var(--pd-text-lg);
+  font-weight: 600;
+}
+
+.pd-dialog__message {
+  margin: 0;
+  color: var(--pd-fg-soft);
+}
+
+.pd-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--pd-space-2);
+  margin-top: var(--pd-space-5);
+}
+
+@keyframes pd-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pd-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
